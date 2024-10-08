@@ -1,0 +1,167 @@
+---
+title: "Analysing Concrete Compressive Strength"
+author: "Sampriti Mahapatra"
+date: "2024-10-05"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(gridExtra)
+library(dplyr)
+library(knitr)
+```
+# Abstract
+The compressive strength of concrete is a fundamental property that plays a crucial role in determining the structural integrity and durability of concrete structures. The target variable we are interested in is compressive strength, which is defined as the force per unit area.The unit of strength is Newtons per square millimeter.
+
+This project aims to analyse the relationship between the different components of concrete (like cement, water, age, slag,etc.) and the resultant concrete strength. A dataset containing numerous concrete mixtures, tested over different curing periods, is examined using Exploratory Data Analysis (EDA). Visualizations such as scatter plots, histograms, and correlation matrices are employed to detect patterns, trends, and potential outliers.The analysis reveals a strong positive correlation between cement content and compressive strength, with curing age also contributing significantly. Other factors, such as water content and superplasticizer usage, display more complex relationships. The findings provide valuable insights for optimizing concrete mix designs, aiding in the production of higher-strength concrete with better performance characteristics.
+
+# Introduction
+Concrete is one of the most important components used in modern day architecture, due to its versatility and durability.This project aims to examine the relationships between the various components of concrete mixtures and their compressive strength. By employing Exploratory Data Analysis (EDA) techniques, this study will uncover patterns, trends, and relationships that can help optimize concrete mix designs for enhanced strength and performance.
+
+# Goal 
+We study the different factors influencing concrete compressive 
+strength and the relationship between them.
+
+# Data Description
+The actual concrete compressive strength (MPa) for a given mixture under a
+specific age (days) was determined from laboratory.The data has 8 quantitative input variables, and 1 quantitative output variable, and 1030 instances (observations).
+
+Concrete is the most important material in civil engineering. The concrete compressive strength is a highly nonlinear function of age and ingredients. These ingredients include cement, blast furnace slag, fly ash, water, superplasticizer, coarse aggregate, and fine aggregate.
+
+*Cement* : This is the main material used in concrete. The compressive strength is highly correlated with the amount of cement used. It is measured in kg per cubic metre. \newline
+*Blast Furnace Slag* : Slag is a byproduct of steel manufacturing and has cement like properties. Blast Furnace Slag is a specific type of slag produced during the manufacturing of steel products. Slag is often used as a cheaper alternative to cement, although it provides relatively less strength.  It is measured in kg per cubic metre.\newline
+*Fly ash* : It is a byproduct of coal combustion in the fuel industry. It is measured in kg per cubic metre. \newline
+*Water* : Water is an essential component in concrete manufacturing. It is measured in kg per cubic metre.\newline
+*Superplasticizer* : An additive chemical compound used in concrete mixtures to reduce the amount of water required and increase compressive strength. It is measured in kg per cubic metre.\newline
+*Coarse Aggregate* : Large particles like gravel or crushed stone that provide the bulk to the concrete mix, contributing to its strength and durability. It is measured in kg per cubic metre.\newline
+*Fine Aggregate* : Small particles like sand that fill the voids between coarse aggregates and help in creating a smooth surface finish for the concrete. It is measured in kg per cubic metre.\newline
+*Age* : This feature represents the number of days between the casting day and the testing day when the compressive strength of the concrete specimen is measured. It is measured in days (1~365).\newline
+*Concrete compressive strength* : This is measured in MPa.\newline
+
+```{r,echo=FALSE}
+concrete_dataset <- read.csv("C:/Users/ashi/Downloads/concrete.csv")
+
+concrete_data <- concrete_dataset[!duplicated(concrete_dataset),]
+
+cement <- concrete_data$cement
+slag <- concrete_data$slag
+ash <- concrete_data$ash
+water <- concrete_data$water
+superplastic <- concrete_data$superplastic
+coarseagg <- concrete_data$coarseagg
+fineagg <- concrete_data$fineagg
+age <- concrete_data$age
+strength <- concrete_data$strength
+
+```
+
+8 variables are continuous, while one (age) is discrete. The output variable is concrete compressive strength.
+
+# Exploratory Data Analysis
+
+## Univariate Analysis
+
+```{r image 1, echo=FALSE, fig.align="center", out.width="100%"}
+knitr::include_graphics("C:/Users/ashi/Desktop/visualisation project images/graph 1.jpeg")
+```
+
+Slag is used as a cheap substitute for cement, but only in smaller quantities.
+So, we can see that there is overall very less slag per kg of mixture.
+
+```{r image 2, echo=FALSE, fig.align="center", out.width="100%"}
+knitr::include_graphics("C:/Users/ashi/Desktop/visualisation project images/graph 2.jpeg")
+```
+
+```{r image 3, echo=FALSE, fig.align="center", out.width="80%"}
+knitr::include_graphics("C:/Users/ashi/Desktop/visualisation project images/graph 3.jpeg")
+```
+
+Most of the samples are less than 100 days old. Most of the samples seem to be around 28 days old.
+
+## Bivariate Analysis
+
+We create a correlation matrix to see which variables seem to have the most correlation between them.
+
+```{r third block, echo=FALSE}
+cor_matrix <- cor(concrete_data)
+cor_strength <- cor_matrix[, "strength"]
+cor_strength <- sort(cor_strength, decreasing = TRUE)
+
+correlation_df <- data.frame(`correlation_wrt_strength` = cor_strength)
+
+kable(correlation_df, caption = "Correlation of strength with different factors")
+```
+
+We can see that compressive strength seems to have the highest correlations with cement, superplastic and age. We plot scatter plots between these variables to confirm our hypothesis.
+
+```{r image 4, echo=FALSE, fig.align="center", out.width="100%"}
+knitr::include_graphics("C:/Users/ashi/Desktop/visualisation project images/graph 4.jpeg")
+```
+
+There seems to be a positive relation between cement and compressive strength. This makes sense since cement is one of the major components of concrete.
+
+```{r image 5, echo=FALSE, fig.align="center", out.width="100%"}
+knitr::include_graphics("C:/Users/ashi/Desktop/visualisation project images/graph 6.jpeg")
+```
+
+For lesser age, the data shows a lot of variability. But by the 28 day mark, 
+the concrete seems to get most of its strength. After the 28th day
+benchmark, the data plateaus and keeps increasing slowly.
+
+```{r image 6, echo=FALSE, fig.align="center", out.width="100%"}
+knitr::include_graphics("C:/Users/ashi/Desktop/visualisation project images/graph 5.jpeg")
+```
+
+With respect to water, we see the points seem to increase until they reach a certain point, following which they start decreasing. This implies that before the 145 kg per cubic metre benchmark, the relationship between addition of water and resultant concrete strength seems to be positive, following which it declines. But since most of the data points are concentrated after the 145 mark, we cannot simply draw this conclusion and will need to perform some more analysis to reach a more reliable solution. 
+
+# Results
+
+- The highest compressive strength observed is 82.60 MPa, and the median is 33.80 MPa
+- There are no categorical variables nor any missing values. 
+- There are 25 rows with duplicate values, we remove them as we don’t want duplicates to affect our results.
+- Water, superplastic and age had the most outliers, which we handled by capping them at a maximum/minimum value. 
+- The variables cement, age and superplastic have most correlation with compressive strength.
+- The scatter plot of cement vs. compressive strength shows a positive linear relationship, while water has a weaker relationship with compressive strength.
+
+```{r seventh block,echo=FALSE}
+mean_values <- apply(concrete_data, 2, mean)
+median_values <- apply(concrete_data, 2, median)
+min_values <- apply(concrete_data, 2, min)
+max_values <- apply(concrete_data, 2, max)
+var_values<-apply(concrete_data,2,var)
+
+# Combine the results into a table-like format
+stats_table <- rbind(
+  Mean = mean_values,
+  Median = median_values,
+  Min = min_values,
+  Max = max_values,
+  Var = var_values
+)
+
+kable(stats_table, 
+      caption = "Summary of Concrete Dataset", 
+      digits = 2,
+      align = 'c')
+```
+
+
+# Conclusion
+
+We can conclude the following from our dataset and exploratory data analysis:
+
+- For data that is less than 28 days old, strength holds a lot of variability.
+
+- Most samples seem to gain most of their strength by day 28. The compressive strength increases exponentially on day 28, as a result we see that most of the existing samples are around 28 days old. Very few samples are older than 100 days. After the 28 day mark, concrete compressive strength increases but at a very slow pace.
+
+- Though cement, superplastic and age seem to have the most correlation with strength, only cement and age provide some valuable insights about the data.
+
+- For water, though we can see that the data seems to increase till the 145 mark and decrease after, we cannot seem to draw conclusive remarks due to lack of sufficient data at lower water levels. Maybe some more experimentation needs to be done on strength at lower water levels to find the optimum level of water use. This may provide more sustainable ways to create stronger concrete.
+
+
+# References
+- [Kaggle Dataset by Vinayak Shanawad](https://www.kaggle.com/datasets/vinayakshanawad/cement-manufacturing-concrete-dataset/data)
+
+
